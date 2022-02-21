@@ -23,13 +23,20 @@ wget https://project-downloads.drogon.net/wiringpi-latest.deb
 sudo dpkg -i wiringpi-latest.deb
 sudo rm wiringpi-latest.deb
 
-git clone https://github.com/juj/fbcp-ili9341.git
-cd fbcp-ili9341
-mkdir build
-cd build
-cmake -DSPI_BUS_CLOCK_DIVISOR=6 -DWAVESHARE_ST7735S_HAT=ON ..
-make -j
-sudo cp fbcp-ili9341 /usr/local/bin/fbcp
+#git clone https://github.com/juj/fbcp-ili9341.git
+#cd fbcp-ili9341
+#mkdir build
+#cd build
+#cmake -DSPI_BUS_CLOCK_DIVISOR=6 -DWAVESHARE_ST7735S_HAT=ON ..
+#make -j
+#sudo cp fbcp-ili9341 /usr/local/bin/fbcp
+
+cd /home/pi
+wget https://github.com/f4dvk/rpi0_sarsat/archive/master.zip
+
+unzip -o master.zip
+mv rpi0_sarsat-master rpi0_sarsat
+rm master.zip
 
 cd /home/pi/rpi0_sarsat/rpi_lcd_1.44
 make clean

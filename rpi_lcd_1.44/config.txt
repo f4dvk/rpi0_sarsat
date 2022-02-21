@@ -1,2 +1,2 @@
-freq=406028
+freq=433950
 no_checksum=1

@@ -104,31 +104,126 @@ void SetConfigParam(char *PathConfigFile, char *Param, char *Value)
 }
 
 void Draw_Init(void)
+
 {
+
     LCD_Clear(WHITE);
 
-    GUI_DisString_EN(3, 2, "Sarsat decoder", &Font12, GUI_BACKGROUND, BLACK);
+
+
+    GUI_DisString_EN(3, 2, " Sarsat Decoder", &Font12, GUI_BACKGROUND, BLACK);
+
+
 
     GetConfigParam(PATH_SARSAT_CONFIG, "freq", freq_config);
+
     int freq=atoi(freq_config);
 
+
+
     for (int f = 5; f >= 0; f--) {
+
       nb[f] = freq % 10;
+
       freq /= 10;
+
     }
 
+
+
     sprintf(value, "  %d%d%d.%d%d%d Mhz", nb[0], nb[1], nb[2], nb[3], nb[4], nb[5]);
-    GUI_DisString_EN(3, 12, value, &Font12, GUI_BACKGROUND, BLACK);
+
+    GUI_DisString_EN(3, 15, value, &Font12, GUI_BACKGROUND, BLACK);
+
+
 
     Selected[i]=Symbol[0];
+
     sprintf(value, "   %c%c %c%c%c", Selected[1], Selected[2], Selected[3], Selected[4], Selected[5]);
-    GUI_DisString_EN(3, 13, value, &Font12, GUI_BACKGROUND, BLACK);
+
+    GUI_DisString_EN(3, 16, value, &Font12, GUI_BACKGROUND, BLACK);
+
+
+    GUI_DisString_EN(3, 32, "         Start>", &Font12, GUI_BACKGROUND, BLACK);
+
+    /*GUI_DisString_EN(3, 24, "line 3 test lon", &Font12, GUI_BACKGROUND, BLACK);
+    GUI_DisString_EN(3, 34, "123456789012345", &Font12, GUI_BACKGROUND, BLACK);
+    GUI_DisString_EN(3, 44, "12345678901234567", &Font8, GUI_BACKGROUND, BLACK);
+    GUI_DisString_EN(3, 54, "line 6", &Font12, GUI_BACKGROUND, BLACK);
+    GUI_DisString_EN(3, 64, "line 7", &Font12, GUI_BACKGROUND, BLACK);
+    GUI_DisString_EN(3, 74, "line 8", &Font12, GUI_BACKGROUND, BLACK);
+    GUI_DisString_EN(3, 84, "line 9", &Font12, GUI_BACKGROUND, BLACK);
+    GUI_DisString_EN(3, 94, "line 10", &Font12, GUI_BACKGROUND, BLACK);
+    GUI_DisString_EN(3, 104, "line 11", &Font12, GUI_BACKGROUND, BLACK);
+    GUI_DisString_EN(3, 114, "line 12", &Font12, GUI_BACKGROUND, BLACK);*/
+
+    /* Press */
+
+    /*GUI_DrawRectangle(40, 60, 60, 80, RED, DRAW_EMPTY, DOT_PIXEL_DFT);
+
+    GUI_DisString_EN(43, 60, "C", &Font24, GUI_BACKGROUND, BLUE);*/
+
+
+
+    /* Left */
+
+    /*GUI_DrawRectangle(20, 60, 40, 80, RED, DRAW_EMPTY, DOT_PIXEL_DFT);
+
+    GUI_DisString_EN(23, 60, "G", &Font24, GUI_BACKGROUND, BLUE);*/
+
+
+
+    /* Right */
+
+    /*GUI_DrawRectangle(60, 60, 80, 80, RED, DRAW_EMPTY, DOT_PIXEL_DFT);
+
+    GUI_DisString_EN(63, 60, "D", &Font24, GUI_BACKGROUND, BLUE);*/
+
+
+
+    /* Up */
+
+    /*GUI_DrawRectangle(40, 40, 60, 60, RED, DRAW_EMPTY, DOT_PIXEL_DFT);
+
+    GUI_DisString_EN(43, 40, "H", &Font24, GUI_BACKGROUND, BLUE);*/
+
+
+
+    /* Down */
+
+    /*GUI_DrawRectangle(40, 80, 60, 100, RED, DRAW_EMPTY, DOT_PIXEL_DFT);
+
+    GUI_DisString_EN(43, 80, "B", &Font24, GUI_BACKGROUND, BLUE);*/
+
+
+
+    /* Key1 */
+
+    /*GUI_DrawRectangle(95, 40, 120, 60, RED, DRAW_EMPTY, DOT_PIXEL_DFT);
+
+    GUI_DisString_EN(98, 43, "K1", &Font16, GUI_BACKGROUND, BLUE);*/
+
+
+
+    /* Key2	*/
+
+    /*GUI_DrawRectangle(95, 60, 120, 80, RED, DRAW_EMPTY, DOT_PIXEL_DFT);
+
+    GUI_DisString_EN(98, 63, "K2", &Font16, GUI_BACKGROUND, BLUE);*/
+
+
+
+    /* Key3 */
+
+    /*GUI_DrawRectangle(95, 80, 120, 100, RED, DRAW_EMPTY, DOT_PIXEL_DFT);
+
+    GUI_DisString_EN(98, 83, "K3", &Font16, GUI_BACKGROUND, BLUE);*/
 
 }
 
 void *WaitButtonEvent(void * arg)
 {
-  while(GET_KEY3 == 1);
+  while(GET_KEY3 == 1) usleep(1000);
   FinishedButton=1;
   return NULL;
 }
@@ -147,7 +242,7 @@ void start_sarsat(void)
   FinishedButton = 0;
 
   // Affichage
-  char old[30]="";
+  char old[30]=" ";
   char line1[30]="";
   char line2[30]="";
   char line3[30]="";
@@ -159,8 +254,10 @@ void start_sarsat(void)
   char line9[30]="";
   char line10[30]="";
   char line11[30]="";
-
   char end[30]="";
+
+  //char crc1[14]="";
+  //char crc2[14]="";
 
   int nbline=1;
 
@@ -175,36 +272,42 @@ void start_sarsat(void)
 
     sscanf(line,"%s ",strTag);
 
-    int length=strlen(ServiceProvidertext);
-    if (ServiceProvidertext[length-1] == '\n') ServiceProvidertext[length-1] = '\0';
+   int length=strlen(line);
+   if (line[length-1] == '\n') line[length-1] = '\0';
 
-    if (((strcmp(strTag, "Lancement")==0) || (strcmp(strTag, "Attente")==0) || (strcmp(strTag, "CRC1")==0) || (strcmp(strTag, "CRC2")==0) || (strcmp(strTag, "Contenu")==0)) && (strcmp(strTag, old)!=0))
+    if (((strcmp(strTag, "Lancement")==0) || (strcmp(strTag, "ATTENTE")==0) || (strcmp(strTag, "CRC1")==0) || (strcmp(strTag, "CRC2")==0) || (strcmp(strTag, "Contenu")==0)) && (strcmp(strTag, old)!=0))
     {
+       //printf("%s\n",strTag);
        //LCD_Clear(WHITE);
        nbline=1;
        strcpy(old, strTag);
        if (strcmp(strTag, "CRC1")==0)
        {
-         GUI_DisString_EN(3, 112, end, &Font12, GUI_BACKGROUND, WHITE);
+         //strcpy(crc1, line);
+         //strcpy(crc2,"");
+         GUI_DisString_EN(3, 120, end, &Font8, GUI_BACKGROUND, WHITE);
          strcpy(end,"");
          strcpy(end, line);
          strcat(end," ");
        }
        else if (strcmp(strTag, "CRC2")==0)
        {
-         GUI_DisString_EN(3, 112, end, &Font12, GUI_BACKGROUND, WHITE);
+         //strcpy(crc2, line);
+         GUI_DisString_EN(3, 120, end, &Font8, GUI_BACKGROUND, WHITE);
          strcat(end, line);
        }
        else if (strcmp(strTag, "Contenu")!=0)
        {
-         LCD_Clear(WHITE);
+         GUI_DisString_EN(3, 2, line1, &Font8, GUI_BACKGROUND, WHITE);
          strcpy(line1, line);
        }
 
        if (strcmp(strTag, "Contenu")==0)
          {
            LCD_Clear(WHITE);
+           //nbline=2;
            strcpy(line2, "");
+           //strcpy(line2, line);
            strcpy(line3, "");
            strcpy(line4, "");
            strcpy(line5, "");
@@ -248,18 +351,23 @@ void start_sarsat(void)
     }else if (nbline==11){
     }
 
-    GUI_DisString_EN(3, 2, line1, &Font12, GUI_BACKGROUND, BLACK);
-    GUI_DisString_EN(3, 12, line2, &Font12, GUI_BACKGROUND, BLACK);
-    GUI_DisString_EN(3, 22, line3, &Font12, GUI_BACKGROUND, BLACK);
+    //GUI_DisString_EN(3, 112, end, &Font12, GUI_BACKGROUND, WHITE);
+    //strcpy(end,crc1);
+    //strcat(end," ");
+    //strcat(end,crc2);
+
+    GUI_DisString_EN(3, 2, line1, &Font8, GUI_BACKGROUND, BLACK);
+    GUI_DisString_EN(3, 10, line2, &Font12, GUI_BACKGROUND, BLACK);
+    GUI_DisString_EN(3, 21, line3, &Font12, GUI_BACKGROUND, BLACK);
     GUI_DisString_EN(3, 32, line4, &Font12, GUI_BACKGROUND, BLACK);
-    GUI_DisString_EN(3, 42, line5, &Font12, GUI_BACKGROUND, BLACK);
-    GUI_DisString_EN(3, 52, line6, &Font12, GUI_BACKGROUND, BLACK);
-    GUI_DisString_EN(3, 62, line7, &Font12, GUI_BACKGROUND, BLACK);
-    GUI_DisString_EN(3, 72, line8, &Font12, GUI_BACKGROUND, BLACK);
-    GUI_DisString_EN(3, 82, line9, &Font12, GUI_BACKGROUND, BLACK);
-    GUI_DisString_EN(3, 92, line10, &Font12, GUI_BACKGROUND, BLACK);
-    GUI_DisString_EN(3, 102, line11, &Font12, GUI_BACKGROUND, BLACK);
-    GUI_DisString_EN(3, 112, end, &Font12, GUI_BACKGROUND, BLACK);
+    GUI_DisString_EN(3, 43, line5, &Font12, GUI_BACKGROUND, BLACK);
+    GUI_DisString_EN(3, 54, line6, &Font12, GUI_BACKGROUND, BLACK);
+    GUI_DisString_EN(3, 65, line7, &Font12, GUI_BACKGROUND, BLACK);
+    GUI_DisString_EN(3, 76, line8, &Font12, GUI_BACKGROUND, BLACK);
+    GUI_DisString_EN(3, 87, line9, &Font12, GUI_BACKGROUND, BLACK);
+    GUI_DisString_EN(3, 98, line10, &Font12, GUI_BACKGROUND, BLACK);
+    GUI_DisString_EN(3, 109, line11, &Font12, GUI_BACKGROUND, BLACK);
+    GUI_DisString_EN(3, 120, end, &Font8, GUI_BACKGROUND, BLACK);
   }
   system("/home/pi/rpi0_sarsat/406/stop.sh >/dev/null 2>/dev/null");
   usleep(1000);
@@ -278,11 +386,11 @@ void KEY_Listen(void)
         usleep(1000);
         if(GET_KEY_UP == 0) {
             sprintf(value, "  %d%d%d.%d%d%d Mhz", nb[0], nb[1], nb[2], nb[3], nb[4], nb[5]);
-            GUI_DisString_EN(3, 12, value, &Font12, GUI_BACKGROUND, WHITE);
+            GUI_DisString_EN(3, 15, value, &Font12, GUI_BACKGROUND, WHITE);
             nb[i] ++;
             if (nb[i] > 9) nb[i]=0;
             sprintf(value, "  %d%d%d.%d%d%d Mhz", nb[0], nb[1], nb[2], nb[3], nb[4], nb[5]);
-            GUI_DisString_EN(3, 12, value, &Font12, GUI_BACKGROUND, BLACK);
+            GUI_DisString_EN(3, 15, value, &Font12, GUI_BACKGROUND, BLACK);
             sprintf(freq_config, "%d%d%d%d%d%d", nb[0], nb[1], nb[2], nb[3], nb[4], nb[5]);
             SetConfigParam(PATH_SARSAT_CONFIG, "freq", freq_config);
             while(GET_KEY_UP == 0) {
@@ -294,11 +402,11 @@ void KEY_Listen(void)
         }
         if(GET_KEY_DOWN == 0) {
             sprintf(value, "  %d%d%d.%d%d%d Mhz", nb[0], nb[1], nb[2], nb[3], nb[4], nb[5]);
-            GUI_DisString_EN(3, 12, value, &Font12, GUI_BACKGROUND, WHITE);
+            GUI_DisString_EN(3, 15, value, &Font12, GUI_BACKGROUND, WHITE);
             nb[i] --;
             if (nb[i] < 0) nb[i]=9;
             sprintf(value, "  %d%d%d.%d%d%d Mhz", nb[0], nb[1], nb[2], nb[3], nb[4], nb[5]);
-            GUI_DisString_EN(3, 12, value, &Font12, GUI_BACKGROUND, BLACK);
+            GUI_DisString_EN(3, 15, value, &Font12, GUI_BACKGROUND, BLACK);
             sprintf(freq_config, "%d%d%d%d%d%d", nb[0], nb[1], nb[2], nb[3], nb[4], nb[5]);
             SetConfigParam(PATH_SARSAT_CONFIG, "freq", freq_config);
             while(GET_KEY_DOWN == 0) {
@@ -310,13 +418,13 @@ void KEY_Listen(void)
         }
         if(GET_KEY_LEFT == 0) {
             sprintf(value, "   %c%c %c%c%c", Selected[1], Selected[2], Selected[3], Selected[4], Selected[5]);
-            GUI_DisString_EN(3, 13, value, &Font12, GUI_BACKGROUND, WHITE);
+            GUI_DisString_EN(3, 16, value, &Font12, GUI_BACKGROUND, WHITE);
             Selected[i]=' ';
             i --;
             if (i < 1) i=5;
             Selected[i]=Symbol[0];
             sprintf(value, "   %c%c %c%c%c", Selected[1], Selected[2], Selected[3], Selected[4], Selected[5]);
-            GUI_DisString_EN(3, 13, value, &Font12, GUI_BACKGROUND, BLACK);
+            GUI_DisString_EN(3, 16, value, &Font12, GUI_BACKGROUND, BLACK);
             while(GET_KEY_LEFT == 0) {
                 usleep(1000);
             }
@@ -326,13 +434,13 @@ void KEY_Listen(void)
         }
         if(GET_KEY_RIGHT == 0) {
             sprintf(value, "   %c%c %c%c%c", Selected[1], Selected[2], Selected[3], Selected[4], Selected[5]);
-            GUI_DisString_EN(3, 13, value, &Font12, GUI_BACKGROUND, WHITE);
+            GUI_DisString_EN(3, 16, value, &Font12, GUI_BACKGROUND, WHITE);
             Selected[i]=' ';
             i ++;
             if (i > 5) i=1;
             Selected[i]=Symbol[0];
             sprintf(value, "   %c%c %c%c%c", Selected[1], Selected[2], Selected[3], Selected[4], Selected[5]);
-            GUI_DisString_EN(3, 13, value, &Font12, GUI_BACKGROUND, BLACK);
+            GUI_DisString_EN(3, 16, value, &Font12, GUI_BACKGROUND, BLACK);
             while(GET_KEY_RIGHT == 0) {
                 usleep(1000);
             }

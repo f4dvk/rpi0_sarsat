@@ -20,7 +20,7 @@ DEBUG = -D $(USELIB)
 ifeq ($(USELIB), USE_BCM2835_LIB)
     LIB = -lbcm2835 -lm -pthread 
 else ifeq ($(USELIB), USE_WIRINGPI_LIB)
-    LIB = -lwiringPi -lm -pthread
+    LIB = -lwiringPi -lm -pthread 
 endif
 
 ${TARGET}:${OBJ_O}
@@ -30,8 +30,8 @@ ${DIR_BIN}/%.o : $(DIR_OBJ)/%.c
 	$(CC) $(CFLAGS) -c  $< -o $@ $(LIB)
 
 ${DIR_BIN}/%.o:$(DIR_FONTS)/%.c
-	$(CC) $(CFLAGS) -c  $< -o $@
-
+	$(CC) $(CFLAGS) -c  $< -o $@ 
+	
 clean :
-	rm $(DIR_BIN)/*.*
-	rm $(TARGET)
+	rm $(DIR_BIN)/*.* 
+	rm $(TARGET) 

@@ -18,11 +18,19 @@ int main(void)
 		exit(0);
 
 	//2.show
-	//printf("**********Init LCD**********\r\n");
+	printf("**********Init LCD**********\r\n");
 	LCD_SCAN_DIR LCD_ScanDir = SCAN_DIR_DFT;//SCAN_DIR_DFT = D2U_L2R
 	LCD_Init(LCD_ScanDir );
 
-	KEY_Listen();
+	//printf("LCD Show \r\n");
+	//GUI_Show();
+	//DEV_Delay_ms(1000);
+
+	//printf("show bmp\r\n");
+	//LCD_ShowBmp();
+	//DEV_Delay_ms(1000);
+
+        KEY_Listen();
 	//3.System Exit
 	DEV_ModuleExit();
 	return 0;
