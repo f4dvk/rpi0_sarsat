@@ -368,6 +368,12 @@ void start_sarsat(void)
     GUI_DisString_EN(3, 98, line10, &Font12, GUI_BACKGROUND, BLACK);
     GUI_DisString_EN(3, 109, line11, &Font12, GUI_BACKGROUND, BLACK);
     GUI_DisString_EN(3, 120, end, &Font8, GUI_BACKGROUND, BLACK);
+    if (strcmp(end, "CRC1 OK CRC2 OK")==0){
+      LCD_SetArealColor(118, 118, 128, 128, GREEN);
+    }
+    else{
+      LCD_SetArealColor(118, 118, 128, 128, RED);
+    }
   }
   system("/home/pi/rpi0_sarsat/406/stop.sh >/dev/null 2>/dev/null");
   usleep(1000);

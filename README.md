@@ -4,4 +4,14 @@ Décodage de balise Sarsat (logiciel de F4EHY http://jgsenlis.free.fr/) sur rasp
 
 Source code pour l'écran: https://www.waveshare.com/wiki/1.44inch_LCD_HAT
 
+- Installer Raspios Buster Lite
+
+- Installation SSH (utilisateur: pi ; mot de passe: raspberry):
+
+```sh
+wget https://raw.githubusercontent.com/f4dvk/rpi0_sarsat/master/install.sh
+chmod +x install.sh
+./install.sh
+```
+
 Programme en cours de développement...
