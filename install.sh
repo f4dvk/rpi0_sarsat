@@ -16,14 +16,15 @@ sudo apt-get -y install rtl-sdr
 sudo bash -c 'echo -e "\n# for RTL-SDR:\nblacklist dvb_usb_rtl28xxu\n" >> /etc/modprobe.d/blacklist.conf'
 
 cd /home/pi
-#wget http://www.airspayce.com/mikem/bcm2835/bcm2835-1.60.tar.gz
-#tar zxvf bcm2835-1.60.tar.gz
-#cd bcm2835-1.60/
-#sudo ./configure
-#sudo make && sudo make check && sudo make install
-#cd /home/pi
-#sudo rm -r bcm2835-1.60
+wget http://www.airspayce.com/mikem/bcm2835/bcm2835-1.60.tar.gz
+tar zxvf bcm2835-1.60.tar.gz
+cd bcm2835-1.60/
+sudo ./configure
+sudo make && sudo make check && sudo make install
+cd /home/pi
+sudo rm -r bcm2835-1.60
 
+cd /home/pi
 wget https://project-downloads.drogon.net/wiringpi-latest.deb
 sudo dpkg -i wiringpi-latest.deb
 sudo rm wiringpi-latest.deb
@@ -43,6 +44,7 @@ echo "------- Téléchargement rpi0_sarsat -------"
 echo "------------------------------------------"
 wget https://github.com/f4dvk/rpi0_sarsat/archive/master.zip
 
+sudo rm -r rpi0_sarsat >/dev/null 2>/dev/null
 unzip -o master.zip
 mv rpi0_sarsat-main rpi0_sarsat
 rm master.zip
