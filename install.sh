@@ -44,7 +44,7 @@ echo "------------------------------------------"
 wget https://github.com/f4dvk/rpi0_sarsat/archive/master.zip
 
 unzip -o master.zip
-mv rpi0_sarsat-master rpi0_sarsat
+mv rpi0_sarsat-main rpi0_sarsat
 rm master.zip
 cd /home/pi
 
