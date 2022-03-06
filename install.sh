@@ -52,7 +52,7 @@ cd /home/pi/rpi0_sarsat/rpi_lcd_1.44
 make clean
 make
 
-cd /home/pi/rpi0_sarsat/rpi_lcd_1.44/406
+cd /home/pi/rpi0_sarsat/406
 ./install.sh
 
 if ! grep -q  "sudo /home/pi/rpi0_sarsat/rpi_lcd_1.44/main &" /home/pi/.bashrc; then
