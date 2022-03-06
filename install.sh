@@ -63,6 +63,9 @@ fi
 
 cd /home/pi
 
+# Auto login
+sudo raspi-config nonint do_boot_behaviour B2
+
 echo "--------------------------------"
 echo "----- Complete.  Rebooting -----"
 echo "--------------------------------"
