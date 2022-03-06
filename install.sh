@@ -61,13 +61,12 @@ fi
 
 cd /home/pi
 
-sudo swapoff -a
-sudo shutdown -r now
-
-echo
 echo "--------------------------------"
 echo "----- Complete.  Rebooting -----"
 echo "--------------------------------"
 sleep 1
+
+sudo swapoff -a
+sudo shutdown -r now
 
 exit
