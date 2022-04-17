@@ -1,3 +1,4 @@
+![rpi0_sarsat banner](/img/dec_406.jpg)
 # rpi0_sarsat
 
 Décodage de balise Sarsat (logiciel de F4EHY http://jgsenlis.free.fr/) sur raspberry PI 0 2 W avec écran 1.44 pouces.
