@@ -30,7 +30,7 @@ int main(void)
 	//LCD_ShowBmp();
 	//DEV_Delay_ms(1000);
 
-        KEY_Listen();
+  KEY_Listen();
 	//3.System Exit
 	DEV_ModuleExit();
 	return 0;

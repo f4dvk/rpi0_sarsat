@@ -15,4 +15,8 @@ chmod +x install.sh
 ./install.sh
 ```
 
+Plusieurs fonctions sont issues du BATC (https://github.com/orgs/BritishAmateurTelevisionClub/repositories) MERCI !
+
+DATV: DVB-S2 non stable car utilisation CPU élevée !!
+
 Programme en cours de développement...

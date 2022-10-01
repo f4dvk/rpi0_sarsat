@@ -1,0 +1,4 @@
+freq=437000
+sr=125
+fec=7
+mode=DVB-S
