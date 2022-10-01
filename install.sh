@@ -60,9 +60,11 @@ echo
 echo "------------------------------------------"
 echo "------- Téléchargement rpi0_sarsat -------"
 echo "------------------------------------------"
-wget https://github.com/f4dvk/rpi0_sarsat/archive/master.zip
 
 sudo rm -r rpi0_sarsat >/dev/null 2>/dev/null
+
+wget https://github.com/f4dvk/rpi0_sarsat/archive/master.zip
+
 unzip -o master.zip
 mv rpi0_sarsat-main rpi0_sarsat
 rm master.zip
