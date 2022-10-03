@@ -68,7 +68,6 @@ wget https://github.com/f4dvk/rpi0_sarsat/archive/master.zip
 unzip -o master.zip
 mv rpi0_sarsat-main rpi0_sarsat
 rm master.zip
-cd /home/pi
 
 cd /home/pi/rpi0_sarsat/rpi_lcd_1.44
 make clean
@@ -119,6 +118,9 @@ echo "hdmi_force_hotplug=1" | sudo tee -a /boot/config.txt
 echo "hdmi_group=2" | sudo tee -a /boot/config.txt
 echo "hdmi_mode=87" | sudo tee -a /boot/config.txt
 echo "hdmi_cvt=128 128 60 1 0 0 0" | sudo tee -a /boot/config.txt
+echo "arm_freq=1000" | sudo tee -a /boot/config.txt
+echo "core_freq=400" | sudo tee -a /boot/config.txt
+echo "force_turbo=1" | sudo tee -a /boot/config.txt
 
 # Réduction temps démarrage sans ethernet
 sudo sed -i 's/^TimeoutStartSec.*/TimeoutStartSec=5/' /etc/systemd/system/network-online.target.wants/networking.service

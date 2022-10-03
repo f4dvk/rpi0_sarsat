@@ -276,7 +276,7 @@ void Draw_Init(void)
 
 void *WaitButtonEvent(void * arg)
 {
-  while(GET_KEY1 == 1) usleep(10000);
+  while(GET_KEY1 == 1) usleep(100000);
   FinishedButton=1;
   return NULL;
 }
@@ -562,7 +562,7 @@ void KEY_Listen(void)
 {
     menu();
     for(;;) {
-        usleep(1000);
+        usleep(10000);
         if(GET_KEY_UP == 0) {
             sprintf(value, "  %d%d%d.%d%d%d Mhz", nb[0], nb[1], nb[2], nb[3], nb[4], nb[5]);
             GUI_DisString_EN(3, 15, value, &Font12, GUI_BACKGROUND, WHITE);
