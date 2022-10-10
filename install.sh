@@ -16,13 +16,13 @@ sudo apt-get -y install fbi vlc ffmpeg
 sudo apt-get -y install bc
 
 cd /home/pi
-wget http://www.airspayce.com/mikem/bcm2835/bcm2835-1.60.tar.gz
-tar zxvf bcm2835-1.60.tar.gz
-cd bcm2835-1.60/
+wget http://www.airspayce.com/mikem/bcm2835/bcm2835-1.71.tar.gz
+tar zxvf bcm2835-1.71.tar.gz
+cd bcm2835-1.71/
 sudo ./configure
 sudo make && sudo make check && sudo make install
 cd /home/pi
-sudo rm -r bcm2835-1.60
+sudo rm -r bcm2835-1.71
 
 cd /home/pi
 wget https://project-downloads.drogon.net/wiringpi-latest.deb
@@ -87,10 +87,7 @@ echo "----------------------------------------------"
 echo "---------- Installation de LeanDVB -----------"
 echo "----------------------------------------------"
 
-wget https://github.com/f4dvk/leansdr/archive/master.zip
-unzip master.zip
-mv leansdr-master leansdr
-rm master.zip
+git clone https://github.com/f4dvk/leansdr.git
 
 cd leansdr/src/apps
 make

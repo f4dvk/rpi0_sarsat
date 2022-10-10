@@ -725,7 +725,7 @@ void localisation_nationale() //voir doc A-27-28-29
     i=126;
     //a=32*(s[i]=='0')+16*(s[i+1]=='0')+8*(s[i+2]=='0')+4*(s[i+3]=='0')+2*(s[i+4]=='0')+(s[i+5]=='0');
     a=calcul(i,i+5);
-    fprintf(stderr,"\nNational Use");
+    //fprintf(stderr,"\nNational Use");
     //contenu.append("National Use\n");
   }
 void identification_nationale()
@@ -1063,12 +1063,12 @@ void affiche_serial_user_1()
           //contenu.append("Spare: \n");
           if(s[42]=='0')
           {
-            fprintf(stderr,"Serial identification number is assigned nationally ");
+            //fprintf(stderr,"Serial identification number is assigned nationally ");
               //contenu.append("Serial identification number is assigned nationally \n");
           }
           else
           {
-            fprintf(stderr,"Identification data include the C/S type approval certificate number ");
+            //fprintf(stderr,"Identification data include the C/S type approval certificate number ");
             //contenu.append("Identification data include the C/S type approval certificate number\n");
           }
         }
@@ -1612,7 +1612,7 @@ for(j=0;j<13;j++)
 if (ss==0)   fprintf(stderr,"\nCRC2 OK");
 else
     {if((no_checksum) && (zero==0)) {fprintf(stderr,"\nCRC2 0");ss=0;}
-    else fprintf(stderr,"\nCRC2 KO. ATTENTION: il y a des erreurs");
+    else fprintf(stderr,"\nCRC2 ERROR");
     }
 return ss;
 }

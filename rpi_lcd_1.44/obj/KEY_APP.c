@@ -385,7 +385,7 @@ void start_sarsat(void)
 
    //printf("%s\n",strTag);
 
-    if (((strcmp(strTag, "RSSI")==0) || (strcmp(strTag, "Lancement")==0) || (strcmp(strTag, "ATTENTE")==0) || (strcmp(strTag, "CRC1")==0) || (strcmp(strTag, "CRC2")==0) || (strcmp(strTag, "Contenu")==0)) && (strcmp(strTag, old)!=0))
+    if (((strcmp(strTag, "Lancement")==0) || (strcmp(strTag, "ATTENTE")==0) || (strcmp(strTag, "CRC1")==0) || (strcmp(strTag, "CRC2")==0) || (strcmp(strTag, "Contenu")==0)) && (strcmp(strTag, old)!=0) || (strcmp(strTag, "RSSI")==0))
     {
        //printf("%s\n",strTag);
        //LCD_Clear(WHITE);
@@ -406,19 +406,19 @@ void start_sarsat(void)
          GUI_DisString_EN(3, 120, end, &Font8, GUI_BACKGROUND, WHITE);
          strcat(end, line);
        }
-       else if (strcmp(strTag, "RSSI")==0)
-       {
-         GUI_DisString_EN(70, 120, rssi, &Font8, GUI_BACKGROUND, WHITE);
-         chopN(line, 5);
-         strcpy(rssi,"");
-         strcpy(rssi,"rssi: ");
-         strcat(rssi,line);
-         fprintf(stderr, "%s\n", rssi);
-       }
-       else if (strcmp(strTag, "Contenu")!=0)
+       else if ((strcmp(strTag, "Contenu")!=0) && (strcmp(strTag, "RSSI")!=0))
        {
          GUI_DisString_EN(3, 2, line1, &Font8, GUI_BACKGROUND, WHITE);
          strcpy(line1, line);
+       }
+       else if (strcmp(strTag, "RSSI")==0)
+       {
+         GUI_DisString_EN(95, 120, rssi, &Font8, GUI_BACKGROUND, WHITE);
+         chopN(line, 5);
+         strcpy(rssi,"");
+         strcpy(rssi,"S: ");
+         strcat(rssi,line);
+         //fprintf(stderr, "%s\n", rssi);
        }
 
        if (strcmp(strTag, "Contenu")==0)
@@ -487,7 +487,7 @@ void start_sarsat(void)
     GUI_DisString_EN(3, 98, line10, &Font12, GUI_BACKGROUND, BLACK);
     GUI_DisString_EN(3, 109, line11, &Font12, GUI_BACKGROUND, BLACK);
     GUI_DisString_EN(3, 120, end, &Font8, GUI_BACKGROUND, BLACK);
-    GUI_DisString_EN(70, 120, rssi, &Font8, GUI_BACKGROUND, BLACK);
+    GUI_DisString_EN(95, 120, rssi, &Font8, GUI_BACKGROUND, BLACK);
     if (strcmp(end, "CRC1 OK CRC2 OK")==0){
       //LCD_SetArealColor(118, 118, 128, 128, GREEN);
       LCD_SetArealColor(118, 0, 128, 10, GREEN);
@@ -562,7 +562,7 @@ void KEY_Listen(void)
 {
     menu();
     for(;;) {
-        usleep(10000);
+        usleep(20000);
         if(GET_KEY_UP == 0) {
             sprintf(value, "  %d%d%d.%d%d%d Mhz", nb[0], nb[1], nb[2], nb[3], nb[4], nb[5]);
             GUI_DisString_EN(3, 15, value, &Font12, GUI_BACKGROUND, WHITE);
@@ -695,6 +695,9 @@ void KEY_Listen(void)
         if(GET_KEY1 == 0) {
             if(CheckRTL()==0)
             {
+              while(GET_KEY1 == 0) {
+                  usleep(20000);
+              }
               LCD_Clear(WHITE);
               if (Menu == 0)
               {
@@ -708,9 +711,6 @@ void KEY_Listen(void)
             else
             {
               not_detected();
-            }
-            while(GET_KEY1 == 0) {
-                usleep(100000);
             }
             /*GUI_DrawRectangle(95, 40, 120, 60, WHITE, DRAW_FULL, DOT_PIXEL_DFT);
             GUI_DrawRectangle(95, 40, 120, 60, RED, DRAW_EMPTY, DOT_PIXEL_DFT);

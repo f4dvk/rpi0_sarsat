@@ -69,7 +69,6 @@ else
 fi
 
 KEY="rtl_sdr -g 0 -f $FreqHz -s $SR_RTLSDR - 2>/dev/null "
-B=""
 
 sudo rm videots >/dev/null 2>/dev/null
 sudo killall leandvb >/dev/null 2>/dev/null
@@ -82,7 +81,7 @@ sudo fbi -T 1 -noverbose -a /home/pi/rpi0_sarsat/rpi_lcd_1.44/pic/Blank_Black.pn
 (sleep 0.2; sudo killall -9 fbi >/dev/null 2>/dev/null) &
 
 sudo $KEY\
-      | $PATHBIN"leandvb" $B --fd-info 2 $FECDVB $FASTLOCK --sr $SYMBOLRATE --standard $MODULATION --anf 0 --sampler rrc --rrc-steps 35 --rrc-rej 10 --roll-off 0.35 --ldpc-bf 100 --nhelpers 2 --ts-udp 232.0.0.99:1234 -f $SR_RTLSDR &
+      | $PATHBIN"leandvb" --fd-info 2 $FECDVB $FASTLOCK --sr $SYMBOLRATE --standard $MODULATION --anf 0 --sampler rrc --rrc-steps 35 --rrc-rej 10 --roll-off 0.35 --ldpc-bf 100 --nhelpers 2 --ts-udp 232.0.0.99:1234 -f $SR_RTLSDR &
 
 #sudo nice -n -30 netcat -u -4 232.0.0.99 1234 < videots &
 
