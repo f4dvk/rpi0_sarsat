@@ -34,7 +34,7 @@ git clone https://github.com/juj/fbcp-ili9341.git
 cd fbcp-ili9341
 mkdir build
 cd build
-cmake -DSPI_BUS_CLOCK_DIVISOR=6 -DWAVESHARE_ST7735S_HAT=ON ..
+cmake -DSTATISTICS=0 -DSPI_BUS_CLOCK_DIVISOR=6 -DWAVESHARE_ST7735S_HAT=ON ..
 make -j
 sudo cp fbcp-ili9341 /usr/local/bin/fbcp
 cd /home/pi
