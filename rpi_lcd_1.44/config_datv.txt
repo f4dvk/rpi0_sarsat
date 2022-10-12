@@ -2,3 +2,6 @@ freq=437000
 sr=125
 fec=7
 mode=DVB-S
+gain=0
+ip=232.0.0.99
+port=1234

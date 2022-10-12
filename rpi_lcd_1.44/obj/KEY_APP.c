@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
+#include <time.h>
 // #include "Debug.h"
 
 // if use 2019-06-20-raspbian-buster
@@ -23,6 +24,13 @@
 pthread_t thbutton;
 int FinishedButton = 0;
 int Menu = 0; // 0 = Sarsat decoder ; 1 = DATV
+
+unsigned long delai_reset=5;       // delai entre perte rx et reset en secondes
+time_t top;                        // variable de calcul temps reset vlc
+time_t Time;                       // variable de calcul temps
+
+char IP[10];
+char Port[5];
 
 int nb[6];
 int i=1;
@@ -213,70 +221,14 @@ void Draw_Init(void)
   GUI_DisString_EN(3, 32, "    Start/Stop>", &Font12, GUI_BACKGROUND, BLACK);
   GUI_DisString_EN(3, 61, "          DATV>", &Font12, GUI_BACKGROUND, BLACK);
 
-  /*GUI_DisString_EN(3, 24, "line 3 test lon", &Font12, GUI_BACKGROUND, BLACK);
-  GUI_DisString_EN(3, 34, "123456789012345", &Font12, GUI_BACKGROUND, BLACK);
-  GUI_DisString_EN(3, 44, "12345678901234567", &Font8, GUI_BACKGROUND, BLACK);
-  GUI_DisString_EN(3, 54, "line 6", &Font12, GUI_BACKGROUND, BLACK);
-  GUI_DisString_EN(3, 64, "line 7", &Font12, GUI_BACKGROUND, BLACK);
-  GUI_DisString_EN(3, 74, "line 8", &Font12, GUI_BACKGROUND, BLACK);
-  GUI_DisString_EN(3, 84, "line 9", &Font12, GUI_BACKGROUND, BLACK);
-  GUI_DisString_EN(3, 94, "line 10", &Font12, GUI_BACKGROUND, BLACK);
-  GUI_DisString_EN(3, 104, "line 11", &Font12, GUI_BACKGROUND, BLACK);
-  GUI_DisString_EN(3, 114, "line 12", &Font12, GUI_BACKGROUND, BLACK);*/
-
-  /* Press */
-
-  /*GUI_DrawRectangle(40, 60, 60, 80, RED, DRAW_EMPTY, DOT_PIXEL_DFT);
-
-  GUI_DisString_EN(43, 60, "C", &Font24, GUI_BACKGROUND, BLUE);*/
-
-  /* Left */
-
-  /*GUI_DrawRectangle(20, 60, 40, 80, RED, DRAW_EMPTY, DOT_PIXEL_DFT);
-
-  GUI_DisString_EN(23, 60, "G", &Font24, GUI_BACKGROUND, BLUE);*/
-
-  /* Right */
-
-  /*GUI_DrawRectangle(60, 60, 80, 80, RED, DRAW_EMPTY, DOT_PIXEL_DFT);
-
-  GUI_DisString_EN(63, 60, "D", &Font24, GUI_BACKGROUND, BLUE);*/
-
-  /* Up */
-
-  /*GUI_DrawRectangle(40, 40, 60, 60, RED, DRAW_EMPTY, DOT_PIXEL_DFT);
-
-  GUI_DisString_EN(43, 40, "H", &Font24, GUI_BACKGROUND, BLUE);*/
-
-  /* Down */
-
-  /*GUI_DrawRectangle(40, 80, 60, 100, RED, DRAW_EMPTY, DOT_PIXEL_DFT);
-
-  GUI_DisString_EN(43, 80, "B", &Font24, GUI_BACKGROUND, BLUE);*/
-
-  /* Key1 */
-
-  /*GUI_DrawRectangle(95, 40, 120, 60, RED, DRAW_EMPTY, DOT_PIXEL_DFT);
-
-  GUI_DisString_EN(98, 43, "K1", &Font16, GUI_BACKGROUND, BLUE);*/
-
-  /* Key2	*/
-
-  /*GUI_DrawRectangle(95, 60, 120, 80, RED, DRAW_EMPTY, DOT_PIXEL_DFT);
-
-  GUI_DisString_EN(98, 63, "K2", &Font16, GUI_BACKGROUND, BLUE);*/
-
-  /* Key3 */
-
-  /*GUI_DrawRectangle(95, 80, 120, 100, RED, DRAW_EMPTY, DOT_PIXEL_DFT);
-
-  GUI_DisString_EN(98, 83, "K3", &Font16, GUI_BACKGROUND, BLUE);*/
-
 }
 
 void *WaitButtonEvent(void * arg)
 {
   while(GET_KEY1 == 1) usleep(100000);
+  while(GET_KEY1 == 0) {
+    usleep(20000);
+  }
   FinishedButton=1;
   return NULL;
 }
@@ -509,18 +461,99 @@ void start_sarsat(void)
 
 void start_datv(void)
 {
-  #define PATH_SCRIPT_DATV "/home/pi/rpi0_sarsat/rpi_lcd_1.44/datv_rx.sh 2>/dev/null"
+  #define PATH_SCRIPT_DATV "/home/pi/rpi0_sarsat/rpi_lcd_1.44/datv_rx.sh 2>&1"
 
+  char *line=NULL;
+  size_t len = 0;
+  ssize_t read;
   FILE *fp;
+
+  GetConfigParam(PATH_DATV_CONFIG,"ip", IP);
+  GetConfigParam(PATH_DATV_CONFIG,"port", Port);
+
+  int LCK=0;
+  char Command[530];
+
   FinishedButton = 0;
 
   pthread_create (&thbutton, NULL, &WaitButtonEvent, NULL);
 
   fp=popen(PATH_SCRIPT_DATV, "r");
+  if(fp==NULL) printf("Process error\n");
 
   while (FinishedButton == 0)
   {
-    sleep(1);
+    Time=time(NULL);
+    if ((read = getline(&line, &len, fp)) != -1)
+    {
+      char strTag[20];
+      sscanf(line,"%s ",strTag);
+      char * token;
+      static int Lock = 0;
+      static float MER = 0;
+      static float SignalStrength = 0;
+
+      if((strcmp(strTag, "SS") == 0))
+      {
+        token = strtok(line," ");
+        token = strtok(NULL," ");
+        sscanf(token,"%f",&SignalStrength);
+      }
+
+      char sSignalStrength[50];
+      sprintf(sSignalStrength, "[SS: %3.0f]", SignalStrength);
+
+      char sLock[50];
+
+      if((strcmp(strTag,"LOCK")==0) || (strcmp(strTag,"FRAMELOCK") == 0))
+      {
+        token = strtok(line," ");
+        token = strtok(NULL," ");
+        static int State_frame;
+        sscanf(token,"%d",&State_frame);
+        if((strcmp(strTag,"LOCK")==0) || ((strcmp(strTag,"FRAMELOCK") == 0) && (State_frame == 0)))
+        {
+          sscanf(token,"%d",&Lock);
+        }
+      }
+
+      if (Lock == 1)
+      {
+        strcpy(sLock,"[LOCKED]");
+        LCK=1;
+      }
+      else
+      {
+        strcpy(sLock,"[SEARCH]");
+        if (LCK == 1)
+        {
+          top=time(NULL);
+          LCK=2;
+        }
+        if ((((unsigned long)difftime(Time, top)) > delai_reset) && (LCK == 2))
+        {
+          system("sudo killall vlc >/dev/null 2>/dev/null");
+          usleep(500);
+          snprintf(Command, 530, "sudo -u pi cvlc -f --codec ffmpeg --video-title-timeout=1 --width 128 --height 128 udp://@%s:%s >/dev/null 2>/dev/null &", IP, Port);
+          system(Command);
+          LCK=0;
+        }
+      }
+
+      if((strcmp(strTag, "MER") == 0))
+      {
+        token = strtok(line," ");
+        token = strtok(NULL," ");
+        sscanf(token,"%f",&MER);
+      }
+
+      char sMER[50];
+      sprintf(sMER, "[MER: %2.1fdB]", MER);
+
+      system("clear && printf '\e[3J'");
+      printf("#########\n\n %s\n\n %s\n\n %s\n\n#########\n", sLock, sSignalStrength, sMER);
+
+    }
   }
 
   pclose(fp);

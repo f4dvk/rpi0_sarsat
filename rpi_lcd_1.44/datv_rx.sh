@@ -22,6 +22,9 @@ sudo fbcp &
 
 MODULATION=$(get_config_var mode $RX_CONFIG)
 FEC=$(get_config_var fec $RX_CONFIG)
+GAIN=$(get_config_var gain $RX_CONFIG)
+IP=$(get_config_var ip $RX_CONFIG)
+PORT=$(get_config_var port $RX_CONFIG)
 SYMBOLRATEK=$(get_config_var sr $RX_CONFIG)
 let SYMBOLRATE=SYMBOLRATEK*1000
 
@@ -66,7 +69,7 @@ else
   FASTLOCK=""
 fi
 
-KEY="rtl_sdr -g 0 -f $FreqHz -s $SR_RTLSDR - 2>/dev/null "
+KEY="rtl_sdr -g $GAIN -f $FreqHz -s $SR_RTLSDR - 2>/dev/null "
 
 sudo rm videots >/dev/null 2>/dev/null
 sudo killall leandvb >/dev/null 2>/dev/null
@@ -74,12 +77,12 @@ sudo killall leandvb >/dev/null 2>/dev/null
 sudo killall vlc >/dev/null 2>/dev/null
 mkfifo videots
 
-sudo killall fbi >/dev/null 2>/dev/null
-sudo fbi -T 1 -noverbose -a /home/pi/rpi0_sarsat/rpi_lcd_1.44/pic/Blank_Black.png
-(sleep 0.2; sudo killall -9 fbi >/dev/null 2>/dev/null) &
+#sudo killall fbi >/dev/null 2>/dev/null
+#sudo fbi -T 1 -noverbose -a /home/pi/rpi0_sarsat/rpi_lcd_1.44/pic/Blank_Black.png
+#(sleep 0.2; sudo killall -9 fbi >/dev/null 2>/dev/null) &
 
 sudo $KEY\
-      | $PATHBIN"leandvb" --fd-info 2 $FECDVB $FASTLOCK --sr $SYMBOLRATE --standard $MODULATION --anf 0 --sampler rrc --rrc-steps 35 --rrc-rej 10 --roll-off 0.35 --ldpc-bf 100 --nhelpers 2 --ts-udp 232.0.0.99:1234 -f $SR_RTLSDR &
+      | $PATHBIN"leandvb" --fd-info 2 $FECDVB $FASTLOCK --sr $SYMBOLRATE --standard $MODULATION --anf 0 --sampler rrc --rrc-steps 35 --rrc-rej 10 --roll-off 0.35 --ldpc-bf 100 --nhelpers 2 --ts-udp $IP:$PORT -f $SR_RTLSDR &
 
 #sudo nice -n -30 netcat -u -4 232.0.0.99 1234 < videots &
 
@@ -91,4 +94,4 @@ sudo $KEY\
 
  sudo -u pi cvlc -f --codec ffmpeg --video-title-timeout=100 \
    --width 128 --height 128 \
-   udp://@232.0.0.99:1234 >/dev/null 2>/dev/null &
+   udp://@$IP:$PORT >/dev/null 2>/dev/null &
