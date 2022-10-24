@@ -15,15 +15,15 @@ cd /home/pi
 wget https://github.com/f4dvk/rpi0_sarsat/archive/master.zip -O master.zip
 unzip -o master.zip
 
-cp -f -r rpi0_sarsat-master/406 rpi0_sarsat
-cp -f -r rpi0_sarsat-master/img rpi0_sarsat
-cp -f -r rpi0_sarsat-master/rpi_lcd_1.44 rpi0_sarsat
+cp -f -r rpi0_sarsat-main/406 rpi0_sarsat
+cp -f -r rpi0_sarsat-main/img rpi0_sarsat
+cp -f -r rpi0_sarsat-main/rpi_lcd_1.44 rpi0_sarsat
 
 rm master.zip
 rm -rf portsdown-buster-master
 cd /home/pi
 
-sudo killall -9 main
+sudo killall -9 main >/dev/null 2>/dev/null
 echo "Installation rpi0_sarsat"
 cd rpi0_sarsat/rpi_lcd_1.44/
 make clean
@@ -32,7 +32,7 @@ make
 cd /home/pi/rpi0_sarsat/406
 ./install.sh
 
-sudo rm -r /home/pi/leansdr
+sudo rm -r /home/pi/leansdr >/dev/null 2>/dev/null
 
 git clone https://github.com/f4dvk/leansdr.git
 
