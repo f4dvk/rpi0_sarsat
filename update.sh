@@ -20,7 +20,7 @@ cp -f -r rpi0_sarsat-main/img rpi0_sarsat
 cp -f -r rpi0_sarsat-main/rpi_lcd_1.44 rpi0_sarsat
 
 rm master.zip
-rm -rf portsdown-buster-master
+sudo rm -rf rpi0_sarsat-main
 cd /home/pi
 
 sudo killall -9 main >/dev/null 2>/dev/null
@@ -32,7 +32,9 @@ make
 cd /home/pi/rpi0_sarsat/406
 ./install.sh
 
-sudo rm -r /home/pi/leansdr >/dev/null 2>/dev/null
+cd /home/pi
+
+sudo rm -r /home/pi/leansdr
 
 git clone https://github.com/f4dvk/leansdr.git
 
