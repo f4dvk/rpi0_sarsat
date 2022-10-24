@@ -31,6 +31,9 @@ time_t Time;                       // variable de calcul temps
 
 char IP[10];
 char Port[5];
+char MyIP[10];
+char IPm[10];
+char IPl[10];
 
 int nb[6];
 int i=1;
@@ -184,6 +187,33 @@ void not_detected(void)
     usleep(100000);
   }
 
+  while(GET_KEY2 == 0)
+  {
+    usleep(100000);
+  }
+
+  menu();
+}
+
+void not_connected(void)
+{
+  LCD_Clear(WHITE);
+
+  GUI_DisString_EN(3, 16, " INTERNET", &Font16, GUI_BACKGROUND, RED);
+  GUI_DisString_EN(3, 30, "   NON", &Font16, GUI_BACKGROUND, RED);
+  GUI_DisString_EN(3, 44, " CONNECTE!", &Font16, GUI_BACKGROUND, RED);
+  GUI_DisString_EN(3, 61, "        Retour>", &Font12, GUI_BACKGROUND, BLACK);
+
+  while(GET_KEY2 == 1)
+  {
+    usleep(100000);
+  }
+
+  while(GET_KEY2 == 0)
+  {
+    usleep(100000);
+  }
+
   menu();
 }
 
@@ -220,6 +250,7 @@ void Draw_Init(void)
   GUI_DisString_EN(3, 16, value, &Font12, GUI_BACKGROUND, BLACK);
   GUI_DisString_EN(3, 32, "    Start/Stop>", &Font12, GUI_BACKGROUND, BLACK);
   GUI_DisString_EN(3, 61, "          DATV>", &Font12, GUI_BACKGROUND, BLACK);
+  GUI_DisString_EN(3, 90, "          Menu>", &Font12, GUI_BACKGROUND, BLACK);
 
 }
 
@@ -231,6 +262,90 @@ void *WaitButtonEvent(void * arg)
   }
   FinishedButton=1;
   return NULL;
+}
+
+void Check_network(void)
+{
+  FILE *fp;
+
+  fp = popen("hostname -I | cut -d\' \' -f1", "r");
+
+  if (fp == NULL) {
+    printf("Failed to run command\n" );
+    exit(1);
+  }
+
+  while (fgets(MyIP, 16, fp) != NULL)
+  {
+    //printf("%s", MyIPs);
+  }
+
+  pclose(fp);
+
+  if (strcmp(MyIP, "") == 0) // localhost
+  {
+    GetConfigParam(PATH_DATV_CONFIG, "ipl", IPl);
+    SetConfigParam(PATH_DATV_CONFIG, "ip", IPl);
+    printf("UDP IP localhost: %s\n", IPl);
+  }
+  else // Multicast
+  {
+    GetConfigParam(PATH_DATV_CONFIG, "ipm", IPm);
+    SetConfigParam(PATH_DATV_CONFIG, "ip", IPm);
+    printf("UDP IP Multicast: %s\n", IPm);
+  }
+
+}
+
+int CheckGoogle()
+{
+  FILE *fp;
+  char response[127];
+
+  /* Open the command for reading. */
+  fp = popen("ping 8.8.8.8 -c1 | head -n 5 | tail -n 1 | grep -o \"1 received,\" | head -c 11", "r");
+  if (fp == NULL) {
+    printf("Failed to run command\n" );
+    exit(1);
+  }
+
+  /* Read the output a line at a time - output it. */
+  while (fgets(response, 12, fp) != NULL)
+  {
+    printf("%s", response);
+  }
+  //  printf("%s", response);
+  /* close */
+  pclose(fp);
+  if (strcmp (response, "1 received,") == 0)
+  {
+    return 0;
+  }
+  else
+  {
+    return 1;
+  }
+}
+
+void Update(void)
+{
+  char Command[530];
+
+  strcpy(Command, "rm /home/pi/update.sh >/dev/null 2>/dev/null");
+  system(Command);
+
+  printf("Téléchargement du fichier update\n");
+  strcpy(Command, "sudo -u pi wget https://raw.githubusercontent.com/f4dvk/rpi0_sarsat/master/update.sh");
+  strcat(Command, " -O /home/pi/update.sh");
+  system(Command);
+
+  strcpy(Command, "sudo -u pi chmod +x /home/pi/update.sh");
+  system(Command);
+  system("reset");
+
+  system("cd /home/pi");
+  system("sudo -u pi /home/pi/update.sh -p");
+
 }
 
 void start_datv_menu(void)
@@ -579,6 +694,16 @@ void start_datv(void)
 
 }
 
+void start_menu(void)
+{
+  LCD_Clear(WHITE);
+
+  GUI_DisString_EN(3, 2, "     Menu     ", &Font12, GUI_BACKGROUND, BLACK);
+  GUI_DisString_EN(3, 32, "        Update>", &Font12, GUI_BACKGROUND, BLACK);
+  //GUI_DisString_EN(3, 61, "              >", &Font12, GUI_BACKGROUND, BLACK);
+  GUI_DisString_EN(3, 90, "          Exit>", &Font12, GUI_BACKGROUND, BLACK);
+}
+
 void menu(void)
 {
   if (Menu == 0)
@@ -588,6 +713,10 @@ void menu(void)
   else if (Menu == 1)
   {
     start_datv_menu();
+  }
+  else if (Menu == 2)
+  {
+    start_menu();
   }
 }
 
@@ -608,7 +737,7 @@ void KEY_Listen(void)
             {
               SetConfigParam(PATH_SARSAT_CONFIG, "freq", freq_config);
             }
-            else
+            else if (Menu == 1)
             {
               SetConfigParam(PATH_DATV_CONFIG, "freq", freq_config);
             }
@@ -631,7 +760,7 @@ void KEY_Listen(void)
             {
               SetConfigParam(PATH_SARSAT_CONFIG, "freq", freq_config);
             }
-            else
+            else if (Menu == 1)
             {
               SetConfigParam(PATH_DATV_CONFIG, "freq", freq_config);
             }
@@ -647,7 +776,7 @@ void KEY_Listen(void)
             {
               sprintf(value, "   %c%c %c%c%c", Selected[1], Selected[2], Selected[3], Selected[4], Selected[5]);
             }
-            else
+            else if (Menu == 1)
             {
               sprintf(value, "  %c%c%c %c%c%c", Selected[0], Selected[1], Selected[2], Selected[3], Selected[4], Selected[5]);
             }
@@ -660,7 +789,7 @@ void KEY_Listen(void)
               Selected[i]=Symbol[0];
               sprintf(value, "   %c%c %c%c%c", Selected[1], Selected[2], Selected[3], Selected[4], Selected[5]);
             }
-            else
+            else if (Menu == 1)
             {
               if (i < 0) i=5;
               Selected[i]=Symbol[0];
@@ -679,7 +808,7 @@ void KEY_Listen(void)
             {
               sprintf(value, "   %c%c %c%c%c", Selected[1], Selected[2], Selected[3], Selected[4], Selected[5]);
             }
-            else
+            else if (Menu == 1)
             {
               sprintf(value, "  %c%c%c %c%c%c", Selected[0], Selected[1], Selected[2], Selected[3], Selected[4], Selected[5]);
             }
@@ -692,7 +821,7 @@ void KEY_Listen(void)
               Selected[i]=Symbol[0];
               sprintf(value, "   %c%c %c%c%c", Selected[1], Selected[2], Selected[3], Selected[4], Selected[5]);
             }
-            else
+            else if (Menu == 1)
             {
               if (i > 5) i=0;
               Selected[i]=Symbol[0];
@@ -726,24 +855,39 @@ void KEY_Listen(void)
             GUI_DisString_EN(43, 60, "C", &Font24, GUI_BACKGROUND, BLUE);*/
         }
         if(GET_KEY1 == 0) {
-            if(CheckRTL()==0)
+            while(GET_KEY1 == 0) {
+                usleep(20000);
+            }
+            if (Menu == 2)
             {
-              while(GET_KEY1 == 0) {
-                  usleep(20000);
-              }
-              LCD_Clear(WHITE);
-              if (Menu == 0)
+              if (CheckGoogle() == 0)
               {
-                start_sarsat();
+                Update();
               }
               else
               {
-                start_datv();
+                not_connected();
               }
             }
             else
             {
-              not_detected();
+              if(CheckRTL()==0)
+              {
+                LCD_Clear(WHITE);
+                if (Menu == 0)
+                {
+                  start_sarsat();
+                }
+                else if (Menu == 1)
+                {
+                  Check_network();
+                  start_datv();
+                }
+              }
+              else
+              {
+                not_detected();
+              }
             }
             /*GUI_DrawRectangle(95, 40, 120, 60, WHITE, DRAW_FULL, DOT_PIXEL_DFT);
             GUI_DrawRectangle(95, 40, 120, 60, RED, DRAW_EMPTY, DOT_PIXEL_DFT);
@@ -754,7 +898,7 @@ void KEY_Listen(void)
             {
               start_datv_menu();
             }
-            else
+            else if (Menu == 1)
             {
               Draw_Init();
             }
@@ -766,7 +910,15 @@ void KEY_Listen(void)
             GUI_DisString_EN(98, 63, "K2", &Font16, GUI_BACKGROUND, BLUE);*/
         }
         if(GET_KEY3 == 0) {
-            if (Menu == 1)
+            while(GET_KEY3 == 0) {
+              usleep(100000);
+            }
+            if (Menu == 0)
+            {
+              Menu = 2;
+              menu();
+            }
+            else if (Menu == 1)
             {
               sprintf(value, "%s FEC:%s", mode, fec_char[j]);
               GUI_DisString_EN(3, 116, value, &Font12, GUI_BACKGROUND, WHITE);
@@ -794,9 +946,11 @@ void KEY_Listen(void)
               }
               sprintf(value, "%s FEC:%s", mode, fec_char[j]);
               GUI_DisString_EN(3, 116, value, &Font12, GUI_BACKGROUND, BLACK);
-              while(GET_KEY3 == 0) {
-                usleep(100000);
-              }
+            }
+            else if (Menu == 2)
+            {
+              Menu = 0;
+              menu();
             }
         }
     }

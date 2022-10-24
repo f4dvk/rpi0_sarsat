@@ -3,5 +3,7 @@ sr=125
 fec=7
 mode=DVB-S
 gain=0
+ipl=127.0.0.1
+ipm=232.0.0.99
 ip=127.0.0.1
 port=1234
