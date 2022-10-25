@@ -277,12 +277,12 @@ void Check_network(void)
 
   while (fgets(MyIP, 16, fp) != NULL)
   {
-    //printf("%s", MyIPs);
+    //printf("%s", MyIP);
   }
 
   pclose(fp);
 
-  if (strcmp(MyIP, "") == 0) // localhost
+  if (strcmp(MyIP, "\n") == 0) // localhost
   {
     GetConfigParam(PATH_DATV_CONFIG, "ipl", IPl);
     SetConfigParam(PATH_DATV_CONFIG, "ip", IPl);
