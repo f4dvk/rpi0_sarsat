@@ -65,7 +65,7 @@ while (1) {
     printf "\nLancement ...";
     #$utc = strftime(' %d %m %Y   %Hh%Mm%Ss', gmtime);
     #printf "$utc UTC";
-    system("rtl_fm -p $ppm -M fm -s $largeur -R 1 -f $freq 2>/dev/null |\
+    system("rtl_fm -p $ppm -M fm -s $largeur -R 2 -f $freq 2>/dev/null |\
 	    sox -t raw -r $largeur -e s -b 16 -c 1 - -t wav - $filter 2>/dev/null |\
 	    $dec ");
 }

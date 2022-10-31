@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" language="javascript">
+    function CloseWindow() {
+    window.open('','_self','');
+    self.close();
+    }
+    </script>
+    <title>SARSAT - CARTE</title>
+     <meta name="viewport", user-scalable=no">
+     <meta charset=utf-8">
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB58J19ZxqK8kzU3ztCcqpl7QrDCDqsY2M&libraries=geometry&callback=initMap"
+        async defer></script>
+    <script type="text/javascript">
+    function loadFile(filePath) {
+      var result = null;
+      var xmlhttp = new XMLHttpRequest();
+      xmlhttp.open("GET", filePath, false);
+      xmlhttp.send();
+      if (xmlhttp.status==200) {
+        result = xmlhttp.responseText;
+      }
+      return result;
+    }
+
+    function getValueByKey(text, key){ // Recherche "key" dans "text" ex: lat=49.999, renvoi 49.999
+      var regex = new RegExp("^" + key + "=(.*)$", "m");
+      var match = regex.exec(text);
+      if(match)
+        return match[1];
+      else
+        return null;
+      }
+
+    var marker1;
+    var default_zoom = 10;
+    var map;
+    var markersArray = [];
+    var lat_old;
+    var lon_old;
+
+    function initMap() {
+
+      var text_value = loadFile("decode.txt");
+
+      var point = new google.maps.LatLng(getValueByKey(text_value, "lat"), getValueByKey(text_value, "lon"));
+
+      map = new google.maps.Map(document.getElementById('map'), {
+        zoom: default_zoom,
+        center: point
+      });
+
+      //default_zoom = map.getZoom();
+
+      //map.controls[google.maps.ControlPosition.TOP_CENTER].push(
+      //    document.getElementById('info'));
+
+      //marker1 = new google.maps.Marker({
+      //  map: map,
+      //  icon: {
+      //        url: 'http://maps.google.com/mapfiles/kml/shapes/airports.png'
+      //  },
+      //  draggable: false,
+      //  position: point
+      //});
+
+      //var contenuInfoBulle =  getValueByKey(text_value, "trame")
+
+      //var infoBulle = new google.maps.InfoWindow({
+      //content: contenuInfoBulle
+      //});
+
+      //infoBulle.open(map, marker1)
+
+      //google.maps.event.addListener(marker1, 'click', function() {
+      // infoBulle.open(map,marker1);
+      //});
+
+      //map.addListener('click', function() {
+      //default_zoom = map.getZoom();
+
+      //markersArray.push(marker1);
+
+      //});
+    }
+
+    function clearOverlays() {
+      for (var i = 0; i < markersArray.length; i++ ) {
+        markersArray[i].setMap(null);
+      }
+      markersArray.length = 0;
+    }
+
+    function initialyze() {
+      setInterval(function() {
+        var new_text_value = loadFile("decode.txt");
+        var new_point = new google.maps.LatLng(getValueByKey(new_text_value, "lat"), getValueByKey(new_text_value, "lon"));
+        var lat = getValueByKey(new_text_value, "lat");
+        var lon = getValueByKey(new_text_value, "lon");
+        if ((lat != lat_old) || (lon != lon_old)) {
+          lat_old = lat;
+          lon_old = lon;
+          map.setCenter(new_point);
+          clearOverlays();
+
+          marker1 = new google.maps.Marker({
+            position: new_point,
+            icon: {
+              url: 'http://maps.google.com/mapfiles/kml/shapes/airports.png'
+            },
+            map: map,
+            draggable: false
+          });
+
+          var contenuInfoBulle =  getValueByKey(new_text_value, "trame")
+
+          var infoBulle = new google.maps.InfoWindow({
+          content: contenuInfoBulle
+          });
+
+          //infoBulle.open(map, marker1)
+
+          google.maps.event.addListener(marker1, 'click', function() {
+           infoBulle.open(map,marker1);
+          });
+
+          markersArray.push(marker1);
+
+        };
+      },2000);
+    }
+    </script>
+ </head>
+  <body onload="initialyze()">
+    <div id="map"></div>
+  </body>
+</html>

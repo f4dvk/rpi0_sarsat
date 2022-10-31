@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript">
+    function loadFile(filePath) {
+      var result = null;
+      var xmlhttp = new XMLHttpRequest();
+      xmlhttp.open("GET", filePath, false);
+      xmlhttp.send();
+      if (xmlhttp.status==200) {
+        result = xmlhttp.responseText;
+      }
+      return result;
+    }
+
+    function getValueByKey(text, key){ // Recherche "key" dans "text" ex: lat=49.999, renvoi 49.999
+      var regex = new RegExp("^" + key + "=(.*)$", "m");
+      var match = regex.exec(text);
+      if(match)
+        return match[1];
+      else
+        return null;
+    }
+
+    var text_value = loadFile("decode.txt");
+    var date = getValueByKey(text_value, "date");
+
+    document.getElementById("last").innerHTML=date;
+
+    </script>
+  </head>
+  <body bgcolor=\"white\">
+  <p><font color=grey><strong><u>Dernière Trame:</u> <span id="last"></span></strong></font></p>
+  </body>
+</html>

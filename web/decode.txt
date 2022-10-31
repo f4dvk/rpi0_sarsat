@@ -1,0 +1,4 @@
+date=Mon 31 Oct 07:36:31 GMT 2022
+trame=Trame de test...
+lat=49.2222
+lon=3.5555

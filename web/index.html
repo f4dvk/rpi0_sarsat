@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="https://www.w3.org/1999/xhtml">
+
+  <head>
+
+    <meta http-equiv="content-type" content="application/xhtml+xml; charset=iso-8859-1" />
+
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+
+    <meta http-equiv="Pragma" content="no-cache">
+
+    <meta http-equiv="Expires" content="0" />
+
+    <title>SARSAT</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+   $("#log").load("log.html");
+   var refreshId = setInterval(function() {
+     $("#log").load('log.html?' + 1*new Date());
+   },2000);
+});
+</script>
+</head>
+
+<body bgcolor="white">
+<div style="text-align: center;" id="log"></div>
+<br/>
+<div style="text-align: center; height: 781px;"> <object width="100%" height="100%" content="text/html; charset=UTF-8859-1" data="carte.html">
+</div>
+<br/>
+</html>

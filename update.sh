@@ -11,6 +11,9 @@ sudo apt-get clean
 sudo apt-get update --allow-releaseinfo-change
 sudo apt-get -y dist-upgrade
 
+sudo apt-get -y install apache2
+sudo apt-get -y install php php-mbstring
+
 cd /home/pi
 wget https://github.com/f4dvk/rpi0_sarsat/archive/master.zip -O master.zip
 unzip -o master.zip
@@ -43,6 +46,13 @@ make
 cp leandvb /home/pi/rpi0_sarsat/rpi_lcd_1.44/bin/
 
 cd /home/pi
+
+if [ ! -f "/var/www/html/carte.html" ]; then
+  sudo cp /home/pi/rpi0_sarsat/web/index.html /var/www/html/
+  sudo cp /home/pi/rpi0_sarsat/web/carte.html /var/www/html/
+  sudo cp /home/pi/rpi0_sarsat/web/log.html /var/www/html/
+  sudo cp /home/pi/rpi0_sarsat/web/decode.txt /var/www/html/
+fi
 
 printf "\nRebooting\n"
 

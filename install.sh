@@ -15,6 +15,9 @@ sudo apt-get -y install git
 sudo apt-get -y install fbi vlc ffmpeg
 sudo apt-get -y install bc
 
+sudo apt-get -y install apache2
+sudo apt-get -y install php php-mbstring
+
 cd /home/pi
 wget http://www.airspayce.com/mikem/bcm2835/bcm2835-1.71.tar.gz
 tar zxvf bcm2835-1.71.tar.gz
@@ -79,6 +82,11 @@ cd /home/pi/rpi0_sarsat/406
 if ! grep -q  "sudo /home/pi/rpi0_sarsat/rpi_lcd_1.44/main &" /home/pi/.bashrc; then
   echo "sudo /home/pi/rpi0_sarsat/rpi_lcd_1.44/main &" >> /home/pi/.bashrc
 fi
+
+sudo cp /home/pi/rpi0_sarsat/web/index.html /var/www/html/
+sudo cp /home/pi/rpi0_sarsat/web/carte.html /var/www/html/
+sudo cp /home/pi/rpi0_sarsat/web/log.html /var/www/html/
+sudo cp /home/pi/rpi0_sarsat/web/decode.txt /var/www/html/
 
 cd /home/pi
 
