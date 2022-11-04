@@ -112,7 +112,13 @@ echo "----------------------------------------------"
 echo "---- Setting Framebuffer to 32 bit depth -----"
 echo "----------------------------------------------"
 
-sudo sed -i "/^dtoverlay=vc4-fkms-v3d/c\#dtoverlay=vc4-fkms-v3d" /boot/config.txt
+VERSION=$(cat /etc/os-release | grep VERSION_CODENAME | awk -F"=" '{ print $NF }')
+
+if [ "$VERSION" == "bullseye" ]; then
+  sudo sed -i "/^dtoverlay=vc4-kms-v3d/c\#dtoverlay=vc4-kms-v3d" /boot/config.txt # Bullseye
+else
+  sudo sed -i "/^dtoverlay=vc4-fkms-v3d/c\#dtoverlay=vc4-fkms-v3d" /boot/config.txt # Buster
+fi
 
 echo
 echo "----------------------------------------------"
