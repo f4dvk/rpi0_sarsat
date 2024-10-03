@@ -633,9 +633,9 @@ void identification_AIRCRAFT_24_BIT_ADRESS()
 	fprintf(stderr,"\nID AIRCRAFT 24:");
     //contenu.append("Identifiant AIRCRAFT 24 BIT ADRESSE: ");
     //Integer xxx=xx;
-    fprintf(stderr,"%d",xx);
+    fprintf(stderr,"\n%d",xx);
     //contenu.append(xxx.to//String()).append("\n");
-    fprintf(stderr,"en Hexa:");
+    fprintf(stderr,"\nen Hexa:");
     //contenu.append(" en Hexa: ");
     for(j=0;j<3;j++)
         {i=40+j*8;
@@ -1404,7 +1404,7 @@ void decodage_LCD()
                                             break;
                                  case 3:
                                             identification_AIRCRAFT_24_BIT_ADRESS();
-                                            //localisation_standard();
+                                            localisation_standard();
                                             //supplementary_data();
                                             break;
                                  case 4:	case 6 :case 7:
