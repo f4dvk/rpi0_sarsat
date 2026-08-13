@@ -5,7 +5,7 @@ Décodage de balise Sarsat (logiciel de F4EHY http://jgsenlis.free.fr/) sur rasp
 
 Source code pour l'écran: https://www.waveshare.com/wiki/1.44inch_LCD_HAT
 
-- Installer Raspios Bullseye Lite
+- Installer Raspios Bullseye Lite : https://downloads.raspberrypi.org/raspios_oldstable_lite_armhf/images/raspios_oldstable_lite_armhf-2025-05-07/2025-05-06-raspios-bullseye-armhf-lite.img.xz
 
 - Installation SSH (utilisateur: pi ; mot de passe: raspberry):
 
