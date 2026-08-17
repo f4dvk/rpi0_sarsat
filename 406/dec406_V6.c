@@ -432,6 +432,153 @@ void affiche_baudot30()
 		}
 	}
 
+void identification_ELT_DT()
+	{int i,j,aa;
+	float a=1,x=0;
+	int xx;
+	for(i=65;i>41;i--)
+            {if (s[i]=='1') x+=a;
+             a*=2;
+            }
+	xx=(int)x;
+	fprintf(stderr,"\nId_dec:");
+    //contenu.append("Identifiant AIRCRAFT 24 BIT ADRESSE: ");
+    //Integer xxx=xx;
+    fprintf(stderr,"%d",xx);
+    //contenu.append(xxx.to//String()).append("\r\n");
+    fprintf(stderr,"\nHex:");
+    //contenu.append("  en Hexa:");
+    for(j=0;j<3;j++)
+        {i=42+j*8;
+         aa=calcul(i,i+7);
+         envoi_byte(aa);
+         }
+
+		}
+
+void altitude_ELT_DT()
+	{char c;
+    int i,x,alt;
+    i=108;
+     x=calcul(i,i+3);
+      switch(x)
+					{case 0 :fprintf(stderr,"\nAlt < 400 m");
+                                     break;
+					case 1:fprintf(stderr,"\nAlt 400m-800m");
+                                     break;
+					case 2 :fprintf(stderr,"\nAlt 800m-1200m");
+                                     break;
+ 					case 3 :fprintf(stderr,"\nAlt 1200m-1600m");
+                                     break;
+ 					case 4 :fprintf(stderr,"\nAlt 1600m-2200m");
+                                     break;
+ 					case 5 :fprintf(stderr,"\nAlt 2200m-2800m");
+                                     break;
+ 					case 6 :fprintf(stderr,"\nAlt 2800m-3400m");
+                                     break;
+ 					case 7 :fprintf(stderr,"\nAlt 3400m-4000m");
+                                     break;
+ 					case 8 :fprintf(stderr,"\nAlt 4000m-4800m");
+                                     break;
+ 					case 9 :fprintf(stderr,"\nAlt 4800m-5600m");
+                                     break;
+ 					case 10 :fprintf(stderr,"\nAlt 5600m-6600m");
+                                     break;
+ 					case 11 :fprintf(stderr,"\nAlt 6600m-7600m");
+                                     break;
+ 					case 12 :fprintf(stderr,"\nAlt 7600m-8800m");
+                                     break;
+ 					case 13 :fprintf(stderr,"\nAlt 8800m-10000m");
+                                     break;
+ 					case 14 :fprintf(stderr,"\nAlt > 10000m");
+                                     break;
+					case 15 :fprintf(stderr,"\nAltitude inconnue");
+                                     break;
+
+					 }
+			//fprintf(stderr,"\n");
+	}
+void localisation_ELT_DT() //à vérifier....modif .2025
+ 	{char c;
+    int i,x,latD,latM,latS,lonD,lonM,lonS;
+	if (s[66]=='0') c='N'; else c='S';
+	i=67;
+	//latD=64*(s[i]=='1')+32*(s[i+1]=='1')+16*(s[i+2]=='1')+8*(s[i+3]=='1')+4*(s[i+4]=='1')+2*(s[i+5]=='1')+(s[i+6]=='1');
+    latD=calcul(i,i+6);
+	latM=30*(s[i+7]=='1');
+    //ofsset minutes et secondes
+	i=115;
+	//x=8*(s[i]=='1')+4*(s[i+1]=='1')+2*(s[i+2]=='1')+(s[i+3]=='1');
+	x=calcul(i,i+3);
+    if(s[114]=='0') {x=-x;}
+    latM+=x;
+	i=119;
+	//latS=4*(8*(s[i]=='1')+4*(s[i+1]=='1')+2*(s[i+2]=='1')+(s[i+3]=='1'));
+	latS=4*calcul(i,i+3);
+    if(s[114]=='0') //{latS=-latS;}
+   		{latS=60-latS;latM--;
+				if (latM<0) {latM=60+latM;latD--;}
+		}
+	//fprintf(stderr,"Latitude: ");printf(c);printf(' ');printf(latD);printf('d');printf(latM);printf('m');printf(latS);printf('s');
+    fprintf(stderr,"\nLat:%c%dd%dm%ds ",c,latD,latM,latS);//Charact cc = c;//Integer llatD = latD;//Integer llatM = latM;//Integer llatS = latS;
+    //contenu.append("Latitude  : "+cc.to//String()+" "+llatD.to//String()+"d"+llatM.to//String()+"m"+llatS.to//String()+"s  \r\n");
+    //contenu.append("\r\nLatitude : ").append(cc.to//String()).append(" ").append(llatD.to//String()).append("d").append(llatM.to//String()).append("m").append(llatS.to//String()).append("s");
+    double gpsLat= latD+(60.0*latM+latS)/3600.0;
+    fprintf(stderr,"\n%2.4f Deg",gpsLat);
+    sprintf(value, "%2.4f", gpsLat);
+    SetConfigParam(PATH_LOG, "lat", value);
+    //contenu.append(" = ").append(decform.format(gpsLat)).append(" Deg\r\n");
+    if (s[75]=='0') {c='E';} else {c='W';}
+	i=76;
+	//lonD=128*(s[i]=='1')+64*(s[i+1]=='1')+32*(s[i+2]=='1')+16*(s[i+3]=='1')+8*(s[i+4]=='1')+4*(s[i+5]=='1')+2*(s[i+6]=='1')+(s[i+7]=='1');
+    lonD=calcul(i,i+7);
+    lonM=30*(s[i+8]=='1');
+//fprintf(stderr,"\n\rLongi1: %c %dd%dm ",c,lonD,lonM);
+    //ofsset minutes et secondes
+	i=124;
+	//x=8*(s[i]=='1')+4*(s[i+1]=='1')+2*(s[i+2]=='1')+(s[i+3]=='1');
+	x=calcul(i,i+3);
+    if(s[123]=='0') {x=-x;}
+    lonM+=x;
+// fprintf(stderr,"\n\r offsset:%ddmin",x);
+	i=128;
+	//lonS=4*(8*(s[i]=='1')+4*(s[i+1]=='1')+2*(s[i+2]=='1')+(s[i+3]=='1'));
+	lonS=4*calcul(i,i+3);
+
+	if(s[123]=='0')  {//lonS=-lonS;
+//fprintf(stderr,"\n\r offsset:%ddsec",x);
+		lonS=60-lonS;lonM--;
+        if (lonM<0) {lonM=60+lonM;lonD--;}
+        }
+
+	 //fprintf(stderr,"Longitude: ");printf(c);printf(' ');printf(lonD);printf('d');printf(lonM);printf('m');printf(lonS);printf('s');
+     fprintf(stderr,"\nLon:%c%dd%dm%ds ",c,lonD,lonM,lonS);
+	//Charact ccc = c;//Integer llonD = lonD;//Integer llonM = lonM;//Integer llonS = lonS;
+    // //contenu.append("Longitude: "+ccc.to//String()+" "+llonD.to//String()+"d"+llonM.to//String()+"m"+llonS.to//String()+"s\r\n");
+    //contenu.append("Longitude: ").append(ccc.to//String()).append(" ").append(llonD.to//String()).append("d").append(llonM.to//String()).append("m").append(llonS.to//String()).append("s");
+    double gpsLon= lonD+(60.0*lonM+lonS)/3600.0;
+    fprintf(stderr,"\n%3.4f Deg",gpsLon);
+    sprintf(value, "%3.4f", gpsLon);
+    SetConfigParam(PATH_LOG, "lon", value);
+    //contenu.append(" = ").append(decform.format(gpsLon)).append(" Deg\r\n");
+    altitude_ELT_DT();
+    GeogToUTM(gpsLat, gpsLon);
+    /*if (s[110]==1)
+    {
+     fprintf(stderr,"Encoded Position Data Source Internal");
+        //contenu.append("Encoded Position Data Source Internal\r\n");
+    }
+    else
+    {
+    fprintf(stderr,"Encoded Position Data Source External");
+        //contenu.append("Encoded Position Data Source External\r\n");
+    }
+    s[109]=1;
+    s[108]=0;
+    s[107]=1;
+    s[106]=1; */
+  }
+
 void localisation_standard()
 	{char  c ;
     int i,x,latD,latM,latS,lonD,lonM,lonS;
@@ -456,7 +603,7 @@ void localisation_standard()
 					if (latM<0) {latM=60+latM;latD--;}
 				}
 	//fprintf(stderr,"Latitude: ");fprintf(stderr,"%c",c);fprintf(stderr," ");fprintf(stderr,"%d",latD);fprintf(stderr,"d");fprintf(stderr,"%d",latM);fprintf(stderr,"m");fprintf(stderr,"%d",latS);fprintf(stderr,"s");
-	fprintf(stderr,"\nLat: %c%dd%dm%ds",c,latD,latM,latS);
+	fprintf(stderr,"\nLat:%c%dd%dm%ds",c,latD,latM,latS);
     //Charact cc = c;//Integer llatD = latD;//Integer llatM = latM;//Integer llatS = latS;
     ////contenu.append("Latitude  : "+cc.to//String()+" "+llatD.to//String()+"d"+llatM.to//String()+"m"+llatS.to//String()+"s\n");
     //contenu.append("\nLatitude : ").append(cc.to//String()).append(" ").append(llatD.to//String()).append("d").append(llatM.to//String()).append("m").append(llatS.to//String()).append("s");
@@ -485,7 +632,7 @@ void localisation_standard()
 					if (lonM<0) {lonM=60+lonM;lonD--;}
 				}
 
-    fprintf(stderr,"\nLon: %c%dd%dm%ds",c,lonD,lonM,lonS);
+    fprintf(stderr,"\nLon:%c%dd%dm%ds",c,lonD,lonM,lonS);
     double gpsLon= lonD+(60.0*lonM+lonS)/3600.0;
     fprintf(stderr,"\n%3.4f Deg",gpsLon);
     sprintf(value, "%3.4f", gpsLon);
@@ -1373,8 +1520,8 @@ void decodage_LCD()
 						case 8 ://fprintf(stderr,"\nELT National");
                                 //contenu.append("ELT National\n");
                                 break;
-						case 9 ://fprintf(stderr,"\nSpare National");
-                                //contenu.append("Spare National\n");
+						case 9 ://fprintf(stderr,"\n\rELT-DT");
+                                //contenu.append("ELT_DT Protocole\r\n");
                                 break;
 						case 10 ://fprintf(stderr,"\nEPIRB National");
                                 //contenu.append("EPIRB National\n");
@@ -1417,6 +1564,10 @@ void decodage_LCD()
                                             localisation_standard();
                                             //supplementary_data();
                                             break;
+                                 case 9:
+                                            identification_ELT_DT();
+                                            localisation_ELT_DT();
+                                            break;
                                  case 14:
                                             localisation_standard(); break;
                                  case 12:
@@ -1424,7 +1575,7 @@ void decodage_LCD()
                                                //supplementary_data();
                                                //identification_MMSI_FIXED();
                                                 break;
-                                 case 8:case 9: case 10: case 11: case 15:
+                                 case 8: case 10: case 11: case 15:
                                                localisation_nationale();
                                                identification_nationale();
                                                supplementary_data_1();

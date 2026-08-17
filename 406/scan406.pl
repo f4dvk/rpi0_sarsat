@@ -27,7 +27,7 @@ my $freq= "406.025M";
 my $dec = '/home/pi/rpi0_sarsat/406/dec406_V6 --100 --M3';
 my $dec1 = '/home/pi/rpi0_sarsat/406/dec406_V6 --100 --M3 --no_checksum';
 my $no_checksum = 0;
-my $filter = "lowpass 3000 highpass 400"; #highpass de 10Hz à 400Hz selon la qualité du signal
+my $filter = "lowpass 3000 highpass 100"; #highpass de 10Hz à 400Hz selon la qualité du signal
 
 my $largeur = "12k";
 
